@@ -1,0 +1,29 @@
+# General
+.DS_Store
+
+# Python/Django
+__pycache__/
+*.py[cod]
+*$.py.class
+db.sqlite3
+/venv/
+.env
+*.pyc
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+ios/.symlinks/
+ios/Runner.xcworkspace
+
+# VSCode
+.vscode/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
