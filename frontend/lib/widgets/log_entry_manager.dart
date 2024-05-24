@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/ad_service.dart';
 
 class LogEntryManager extends StatefulWidget {
-  final Function onLogSubmitted;
+  final VoidCallback onLogSubmitted;
   final AdService adService;
   final int logLimit;
 
@@ -25,7 +26,9 @@ class _LogEntryManagerState extends State<LogEntryManager> {
   @override
   void initState() {
     super.initState();
-    _initLogCount();
+    if (!kIsWeb) {
+      _initLogCount();
+    }
   }
 
   Future<void> _initLogCount() async {
@@ -51,7 +54,6 @@ class _LogEntryManagerState extends State<LogEntryManager> {
   }
 
   Future<void> _resetLogCount() async {
-    print('_resetLogCount called');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('logCount', 0);
     await prefs.setBool('adWatched', true);
@@ -59,7 +61,6 @@ class _LogEntryManagerState extends State<LogEntryManager> {
       _logCount = 0;
       _adWatched = true;
     });
-    print('_logCount reset to 0');
   }
 
   void _handleLog() {
@@ -76,8 +77,7 @@ class _LogEntryManagerState extends State<LogEntryManager> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Watch Ad to Continue'),
-        content: Text(
-            'You have reached your free log limit. Watch an ad to unlock ${widget.logLimit} more log entries.'),
+        content: Text('You have reached your free log limit. Watch an ad to unlock ${widget.logLimit} more log entries.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -90,8 +90,7 @@ class _LogEntryManagerState extends State<LogEntryManager> {
                 _resetLogCount().then((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                          'Thank you for watching the ad! You can continue logging.'),
+                      content: Text('Thank you for watching the ad! You can continue logging.'),
                     ),
                   );
                   setState(() {});
@@ -107,18 +106,25 @@ class _LogEntryManagerState extends State<LogEntryManager> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: _handleLog,
-          child: Text('Add to Log'),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'Logs remaining before ad: ${widget.logLimit - _logCount}',
-          style: TextStyle(fontSize: 16),
-        ),
-      ],
-    );
+    if (kIsWeb) {
+      return ElevatedButton(
+        onPressed: widget.onLogSubmitted,
+        child: Text('Add to Log'),
+      );
+    } else {
+      return Column(
+        children: [
+          ElevatedButton(
+            onPressed: _handleLog,
+            child: Text('Add to Log'),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Logs remaining before ad: ${widget.logLimit - _logCount}',
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      );
+    }
   }
 }

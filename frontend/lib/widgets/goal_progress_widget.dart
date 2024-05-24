@@ -144,7 +144,11 @@ class _GoalProgressWidgetState extends State<GoalProgressWidget> {
             curve: Curves.bounceInOut,
           ),
           Text(
-            '$label: ${value.toStringAsFixed(1)} $unit / ${goal.toStringAsFixed(0)} $unit',
+            '$label:',
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            '${value.round()} $unit / ${goal.round()} $unit',
             style: const TextStyle(fontSize: 16.0),
           ),
         ],

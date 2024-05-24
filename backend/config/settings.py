@@ -84,11 +84,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'macrotracker'),
+        'USER': os.getenv('POSTGRES_USER', 'macrotrackeruser'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'MTDBmtbd@38'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -220,4 +223,4 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-ALLOWED_HOSTS = ['192.168.1.5', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['192.168.1.3', '127.0.0.1', 'localhost']

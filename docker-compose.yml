@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: macrotracker
+      POSTGRES_USER: macrotrackeruser
+      POSTGRES_PASSWORD: MTDBmtbd@38
+
+  web:
+    build:
+      context: ./backend
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DEBUG: 'true'
+      POSTGRES_DB: macrotracker
+      POSTGRES_USER: macrotrackeruser
+      POSTGRES_PASSWORD: MTDBmtbd@38
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -34,8 +35,10 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
     tz.initializeTimeZones();
     _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _timeController.text = DateFormat('HH:mm').format(DateTime.now());
-    _adService.initialize();
-    _adService.loadRewardedAd();
+    if (!kIsWeb) {
+      _adService.initialize();
+      _adService.loadRewardedAd();
+    }
   }
 
   @override
@@ -238,10 +241,16 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                     controller: _notesController,
                     decoration: const InputDecoration(labelText: 'Notes'),
                   ),
-                  LogEntryManager(
-                    onLogSubmitted: _submitFoodLog,
-                    adService: _adService,
-                  ),
+                  if (!kIsWeb)
+                    LogEntryManager(
+                      onLogSubmitted: _submitFoodLog,
+                      adService: _adService,
+                    ),
+                  if (kIsWeb)
+                    ElevatedButton(
+                      onPressed: _submitFoodLog,
+                      child: Text('Add to Log'),
+                    ),
                 ],
               ),
             const SizedBox(height: 16),

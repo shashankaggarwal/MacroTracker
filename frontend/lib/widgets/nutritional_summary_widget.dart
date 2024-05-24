@@ -78,25 +78,18 @@ class NutritionalSummary extends ConsumerWidget {
                 ...entry.value.map(
                   (log) {
                     return ListTile(
-                      title: Text(log.foodItemName),
-                      subtitle: Row(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(FontAwesomeIcons.fire, color: Colors.green),
-                          Text(' Cal: ${log.totalCalories ?? 'N/A'} '),
-                          const Icon(Icons.rice_bowl, color: Colors.blue),
-                          Text(' C: ${log.totalCarbs ?? 'N/A'}g '),
-                          const Icon(FontAwesomeIcons.egg, color: Colors.red),
-                          Text(' P: ${log.totalProteins ?? 'N/A'}g '),
-                          const Icon(FontAwesomeIcons.bacon, color: Colors.yellow),
-                          Text(' F: ${log.totalFats ?? 'N/A'}g')
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(DateFormat.Hm().format(log.dateLogged.toLocal())),
+                          Expanded(
+                            child: Text(log.foodItemName, overflow: TextOverflow.ellipsis),
+                          ),
+                          Text(
+                            DateFormat.Hm().format(log.dateLogged.toLocal()),
+                            style: TextStyle(fontSize: 12),
+                          ),
                           IconButton(
-                            icon: const Icon(Icons.delete),
+                            icon: const Icon(Icons.delete, size: 16),
                             onPressed: () async {
                               bool? confirmDelete = await showDialog(
                                 context: context,
@@ -122,6 +115,18 @@ class NutritionalSummary extends ConsumerWidget {
                           ),
                         ],
                       ),
+                      subtitle: Row(
+                        children: [
+                          const Icon(FontAwesomeIcons.fire, color: Colors.green, size: 16),
+                          Text(' Cal: ${log.totalCalories?.round() ?? 'N/A'} '),
+                          const Icon(Icons.rice_bowl, color: Colors.blue, size: 16),
+                          Text(' C: ${log.totalCarbs?.round() ?? 'N/A'}g '),
+                          const Icon(FontAwesomeIcons.egg, color: Colors.red, size: 16),
+                          Text(' P: ${log.totalProteins?.round() ?? 'N/A'}g '),
+                          const Icon(FontAwesomeIcons.bacon, color: Colors.yellow, size: 16),
+                          Text(' F: ${log.totalFats?.round() ?? 'N/A'}g')
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -134,14 +139,14 @@ class NutritionalSummary extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(FontAwesomeIcons.fire, color: Colors.green),
-                            Text(' Cal ${mealTypeTotals[entry.key]!['Calories']?.toStringAsFixed(2) ?? 'N/A'}, '),
-                            const Icon(Icons.rice_bowl, color: Colors.blue),
-                            Text(' C ${mealTypeTotals[entry.key]!['Carbs']?.toStringAsFixed(2) ?? 'N/A'}g, '),
-                            const Icon(FontAwesomeIcons.egg, color: Colors.red),
-                            Text(' P ${mealTypeTotals[entry.key]!['Proteins']?.toStringAsFixed(2) ?? 'N/A'}g, '),
-                            const Icon(FontAwesomeIcons.bacon, color: Colors.yellow),
-                            Text(' F ${mealTypeTotals[entry.key]!['Fats']?.toStringAsFixed(2) ?? 'N/A'}g')
+                            const Icon(FontAwesomeIcons.fire, color: Colors.green, size: 16),
+                            Text(' Cal ${mealTypeTotals[entry.key]!['Calories']?.round() ?? 'N/A'}, '),
+                            const Icon(Icons.rice_bowl, color: Colors.blue, size: 16),
+                            Text(' C ${mealTypeTotals[entry.key]!['Carbs']?.round() ?? 'N/A'}g, '),
+                            const Icon(FontAwesomeIcons.egg, color: Colors.red, size: 16),
+                            Text(' P ${mealTypeTotals[entry.key]!['Proteins']?.round() ?? 'N/A'}g, '),
+                            const Icon(FontAwesomeIcons.bacon, color: Colors.yellow, size: 16),
+                            Text(' F ${mealTypeTotals[entry.key]!['Fats']?.round() ?? 'N/A'}g')
                           ],
                         ),
                       ],
@@ -160,14 +165,14 @@ class NutritionalSummary extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(FontAwesomeIcons.fire, color: Colors.green),
-                      Text(' Cal ${totalCalories.toStringAsFixed(2)}, '),
-                      const Icon(Icons.rice_bowl, color: Colors.blue),
-                      Text(' C ${totalCarbs.toStringAsFixed(2)}g, '),
-                      const Icon(FontAwesomeIcons.egg, color: Colors.red),
-                      Text(' P ${totalProteins.toStringAsFixed(2)}g, '),
-                      const Icon(FontAwesomeIcons.bacon, color: Colors.yellow),
-                      Text(' F ${totalFats.toStringAsFixed(2)}g')
+                      const Icon(FontAwesomeIcons.fire, color: Colors.green, size: 16),
+                      Text(' Cal ${totalCalories.round()}, '),
+                      const Icon(Icons.rice_bowl, color: Colors.blue, size: 16),
+                      Text(' C ${totalCarbs.round()}g, '),
+                      const Icon(FontAwesomeIcons.egg, color: Colors.red, size: 16),
+                      Text(' P ${totalProteins.round()}g, '),
+                      const Icon(FontAwesomeIcons.bacon, color: Colors.yellow, size: 16),
+                      Text(' F ${totalFats.round()}g')
                     ],
                   ),
                 ],

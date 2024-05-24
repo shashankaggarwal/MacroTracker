@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_profile.dart';
 import '../services/api_service_provider.dart';
+import 'dashboard_screen.dart';  // Ensure this is the correct path
 
 class GoalsScreen extends ConsumerStatefulWidget {
-  const GoalsScreen({Key? key}) : super(key: key);
+  const GoalsScreen({super.key});  // Use super parameter for key
 
   @override
-  _GoalsScreenState createState() => _GoalsScreenState();
+  GoalsScreenState createState() => GoalsScreenState();  // Make class public
 }
 
-class _GoalsScreenState extends ConsumerState<GoalsScreen> {
+class GoalsScreenState extends ConsumerState<GoalsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _carbsGoalController = TextEditingController();
   final TextEditingController _proteinGoalController = TextEditingController();
@@ -35,25 +36,27 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
           _loadExistingGoals();
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No profile data found.')),
-        );
+        if (mounted) {  // Ensure mounted before using context
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No profile data found.')),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load user profile: $e')),
-      );
+      if (mounted) {  // Ensure mounted before using context
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load user profile: $e')),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
   void _loadExistingGoals() {
-    if (_userProfile != null) {
-      _carbsGoalController.text = _userProfile!.carbsGoal.toString();
-      _proteinGoalController.text = _userProfile!.proteinGoal.toString();
-      _fatGoalController.text = _userProfile!.fatGoal.toString();
-    }
+    _carbsGoalController.text = _userProfile!.carbsGoal.toString();
+    _proteinGoalController.text = _userProfile!.proteinGoal.toString();
+    _fatGoalController.text = _userProfile!.fatGoal.toString();
   }
 
   void _saveGoals(BuildContext context) {
@@ -69,19 +72,38 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 
       if (_userProfile != null) {
         ref.read(apiServiceProvider).updateProfile(_userProfile!.profileId, updatedGoals).then((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Goals updated successfully.')),
+          final profileFuture = ref.refresh(profileProvider);
+          profileFuture.when(
+            data: (_) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Goals updated successfully.')),
+                );
+                Navigator.of(context).pushReplacementNamed('/dashboard'); // Navigate to the dashboard
+              }
+            },
+            loading: () {},
+            error: (error, _) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to refresh profile: $error')),
+                );
+              }
+            },
           );
-          Navigator.of(context).pushReplacementNamed('/dashboard');
         }).catchError((error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update goals: $error')),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to update goals: $error')),
+            );
+          }
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No user profile loaded, cannot save goals.')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No user profile loaded, cannot save goals.')),
+          );
+        }
       }
     }
   }
